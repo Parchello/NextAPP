@@ -1,19 +1,33 @@
 "use client";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { axios } from "axios";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function SignUpPage() {
   const router = useRouter();
-  const [user, setUser] = React.useState({
+  const [user, setUser] = useState({
     email: "",
     password: "",
     username: "",
   });
-  const [buttonDisavled, setButtonDisavled] = React.useState(true);
+  const [loading, setLoading] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
 
-  const onSignup = async () => {};
+  const onSignup = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post("api/users/signup", user);
+      console.log("Signup sucsees", response.data);
+      router.push("/login");
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (
@@ -21,15 +35,15 @@ export default function SignUpPage() {
       user.password.length > 0 &&
       user.username.length > 0
     ) {
-      setButtonDisavled(false);
+      setButtonDisabled(false);
     } else {
-      setButtonDisavled(true);
+      setButtonDisabled(true);
     }
   }, [user]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1>Register Page</h1>
+      <h1>{loading ? "Loading page..." : "Sign UP"}</h1>
       <hr />
       <label htmlFor="username">Username</label>
       <input
@@ -62,7 +76,7 @@ export default function SignUpPage() {
         onClick={onSignup}
         className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600"
       >
-        {buttonDisavled ? "No sign up" : "Sign Up"}
+        {buttonDisabled ? "No sign up" : "Sign Up"}
       </button>
       <Link className="hover:bg-green-500" href="/login">
         Login Page

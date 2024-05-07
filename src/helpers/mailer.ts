@@ -24,6 +24,13 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
     }
 
     // const transporter = nodemailer.createTransport({});
+
+    const mailoptions = {
+      from: "",
+      to: email,
+      subject:
+        emailType === "VERIFY" ? "Verify your email" : "Reset your password",
+    };
   } catch (error: any) {
     throw new Error(error.message);
   }
